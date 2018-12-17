@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>基础动画</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #box{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background: blueviolet;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box"></div>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript">
+        //  实现一个均速运动，在指定时间内完成动画：计算出总距离/总时间，根据总距离和总时间求出对应的步长（每100ms走一步的话需要走多元远）
+        //  设置一个定时器，让元素每一次都在当前的基础上累加步长即可
+        let oBox = document.getElementById('box');
+        let maxLeft = (utils.win("clientWidth") - oBox.offsetWidth);
+        let duration = 2000;
+        // let step = (maxLeft / duration) * 10;
+        let step = 5;
+        let timer = window.setInterval(() => {
+            let curLeft = utils.css(oBox, "left");
+            if (curLeft + step >= maxLeft) {
+                utils.css(oBox, "left", maxLeft);
+                window.clearInterval(timer);
+                return;
+            }
+            curLeft += step;
+            utils.css(oBox, "left", curLeft);
+        }, 10);
+    </script>
+</body>
+
+</html>

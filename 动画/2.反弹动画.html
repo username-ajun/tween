@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>反弹动画</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #box{
+            position: absolute;
+            top: 0;
+            left: 500px;
+            width: 100px;
+            height: 100px;
+            background: blueviolet;
+        }
+        .btn{
+            width: 500px;
+            margin: 200px auto;
+        }
+        .btn input{
+            width: 80px;
+            height: 40px;
+            border: 1px solid blue;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box"></div>
+    <div class="btn">
+        <input type="button" value="向左" id="btnLeft">
+        <input type="button" value="向右" id="btnRight">
+    </div>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript">
+        //  实现一个均速运动，在指定时间内完成动画：计算出总距离/总时间，根据总距离和总时间求出对应的步长（每100ms走一步的话需要走多元远）
+        //  设置一个定时器，让元素每一次都在当前的基础上累加步长即可
+        let oBox = document.getElementById('box');
+        let maxLeft = (utils.win("clientWidth") - oBox.offsetWidth), minLeft = 0;
+
+        //  target:告诉我要运动得目标位置
+        let timer = null;
+        function move(target) {
+            window.clearInterval(timer);
+            let curLeft = utils.css(oBox, "left");
+            if (curLeft < target) {   //  向左走
+                if (curLeft + 5 >= target) {
+                    utils.css(oBox, "left", target);
+                    return;
+                }
+                curLeft += 5;
+                utils.css(oBox, "left", curLeft);
+            } else if (curLeft > target) { //  向右走
+                if (curLeft - 5 <= target) {
+                    utils.css(oBox, "left", target);
+                    return;
+                }
+                curLeft -= 5;
+                utils.css(oBox, "left", curLeft);
+            } else {  //  不需要运动
+                return;
+            }
+
+            //  这样写性能不好，因为每一次到达时间得时候，都需要先执行一次匿名函数（形成一个私有得作用域），在匿名函数中在执行move，但是move中需要用到得数据值在第一次执行得move方法中呢，需要吧匿名函数形成这个私有得作用域作为跳板找到之前得，这样就导致了匿名函数形成得找个私有得作用域不能销毁。。。
+            timer = window.setTimeout(function () {
+                move(target);
+            }, 10);
+        }
+
+        document.getElementById('btnLeft').onclick = function () {
+            move(minLeft);
+        };
+        document.getElementById('btnRight').onclick = function () {
+            move(maxLeft);
+        };
+
+    </script>
+</body>
+
+</html>
